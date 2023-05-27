@@ -1,21 +1,21 @@
-# Скрипт для создания пустых папок 
+# Script to create empty folders 
 
-### 1) Cоздаем директорию для выполнения операции и переходим в неё
+### 1) Create a directory to perform the operation and go to it
 ```bash
 sudo mkdir folder_script
 ```
 ```bash
 cd folder_script/ 
 ```
-### 2) Cоздаем файл с расширение “.sh” чтобы оболочка понимала что это будет скрипт
+### 2) We create a file with the extension “.sh” so that the shell understands that this will be a script
 ```bash
 touch folder.sh
 ```
-### 3) Добавляем права выполнения для данного файла
+### 3) Add execute permissions for this file
 ```bash
 sudo chmod +x folder.sh  
 ```
-### 4) Редактируем файл и добавляем следующее
+### 4) Edit the file and add the following
 ```bash
 sudo nano folder.sh 
 ```
@@ -37,31 +37,31 @@ for ((i=1;i<=$folders_count;i++)); do
   mkdir -p "$path_to_save/$folder_name"
 done
 
-echo "Скрипт завершен в $(date)" >> $path_to_save/script.log
+echo "Script finished in $(date)" >> $path_to_save/script.log
 ```
 
 
 
-### 5 Запуск скрипта 
+### 5) Running a script
 ```bash
 ./folder.sh 
 ```
 
-# Выполнение скрипта через CRON
+# Executing a script via CRON
 
-### 1) Команда для редактирования расписания cron
+### 1) Command to edit cron schedule
 ```bash
 crontab -e 
 ```
-### 2) Добавление в конец файла скрипта который будет выполняться в 0 минут , 1 час, * - каждый день, * - каждый месяц, * - каждый день недели.
+### 2) Adding a script to the end of the file that will be executed at 0 minutes , 1 hour, * - every day, * - every month, * - every day of the week.
 ```bash
 0 1 * * * /bin/bash /home/ubuntu/folder_script/folder.sh 
 ```
-### 3) Установка таймера на 3 минуты (опционально)
+### 3) Setting the timer to 3 minutes (optional)
 ```bash
 (*/3 * * * * /bin/bash /home/ubuntu/folder_script/folder.sh ) 
 ```
-### 4) Просмотреть список добавленных задач
+### 4) View a list of added tasks
 ```bash
 crontab -l
 ```
@@ -69,8 +69,8 @@ crontab -l
 
 
 
-# Добавление в systemd timer для выполнения скрипта к примеру раз в 30 сек.
-### 1) создание и редактирование конфигурационного файла таймера
+# Adding a timer to systemd to execute a script, for example, once every 30 seconds.
+### 1) creating and editing a timer configuration file
  ```bash
  sudo nano /etc/systemd/system/folder_script.timer 
 ```
@@ -85,7 +85,7 @@ Unit=folder_script.service
 [Install]  
 WantedBy=timers.target  
 ```
-### 2) создание и редактирование конфигурационного файла таймера
+### 2) creating and editing a timer configuration file
  ```bash
  sudo nano /etc/systemd/system/folder_script.service
  ```
@@ -102,32 +102,32 @@ ExecStart=/bin/bash /home/ubuntu/folder_script/folder.sh
 WantedBy=multi-user.target 
 ```
 
- ### перезагрузка конфигурационных файлов systemd
+ ### reloading systemd config files
  ```bash
  sudo systemctl daemon-reload 
  ```
- ### команда запуска в авто режиме при старте системы
+ ### command to run in auto mode at system startup
  ```bash
  sudo systemctl enable folder_script.timer
  ```
- ### немедленный запуск таймера(one shot к примеру как единичный запуск)
+ ### immediate start of the timer (one shot for example as a single launch)
  ```bash
  sudo systemctl start folder_script.timer 
  ```
- ### отображение логов запуска скрипта
+ ### display logs of the script run
  journalctl -u folder_script.service 
- ### список таймеров systemd а также информацию о запланированных последующих запусках
+ ### a list of systemd timers as well as information about scheduled subsequent runs
  ```bash
  systemctl list-timers 
 ```
 
-# Создание скрипта для удаления пустых папок в указанной директории и его дальнейший запуск через systemd
-### 1) Создаём и переходим в директорию
+# Creating a script to delete empty folders in a specified directory and then running it through systemd
+### 1) Create and change directory
 ```bash
 mkdir del_script/
 cd del_script/
 ```
-### 2) Добавляем следующие содержимое в наш файл
+### 2) Add the following content to our file
 ```bash
 nano del.sh
 ```
@@ -140,14 +140,14 @@ path_to_dir=/home/ubuntu/folder_script
 find "$path_to_dir" -type d -empty -delete
 
 
-echo "Скрипт успешно отработал в $(date), директория $path_to_dir очищена от пустых папок " >>/home/ubuntu/del_script/del.log
+echo "The script ran successfully $(date), the directory $path_to_dir cleared of empty folders" >>/home/ubuntu/del_script/del.log
 ```
 
-### 3) Делаем наш файл исполняемым
+### 3) Making our file executable
 ```bash
 chmod +x del.sh
 ```
-## 4) Редактируем файлы del.timer и del.service добавляя следующие содержимое
+## 4) Editing del.timer and del.service files adding the following content
 ```bash
 nano /etc/systemd/system/del.timer
 ```
@@ -177,7 +177,7 @@ ExecStart=/bin/bash /home/ubuntu/del_script/del.sh
 [Install]
 WantedBy=multi-user.target
 ```
-### Включаем таймер del.timer для автоматического запуска скрипта
+### Turn on the del.timer timer to automatically run the script
 ```bash
 systemctl enable del.timer
 ```
